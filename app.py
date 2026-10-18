@@ -119,7 +119,7 @@ REFERENCE_RANGES = {
 
 @st.cache_resource
 def load_model():
-    # The model was trained and serialized with scikit-learn 1.7.2.
+    # The model was trained and serialized with scikit-learn 1.8.0.
     # requirements.txt pins that version for deployment.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -142,7 +142,7 @@ except Exception as exc:
     st.error(
         "The prediction model could not be loaded. "
         "Please confirm that final_model_bundle.joblib is present and "
-        "that scikit-learn==1.7.2 is installed."
+        "that scikit-learn==1.8.0 is installed."
     )
     st.exception(exc)
     st.stop()
@@ -169,10 +169,11 @@ st.markdown(
 with st.sidebar:
     st.subheader("Model information")
     st.write("**Primary endpoint:** recorded peak cTnI ≥70× the applicable study upper reference limit on postoperative days 1–3.")
-    st.write("**Development cohort:** n=1,140")
-    st.write("**Original external validation:** n=193, 30 events")
-    st.write("**Fixed-predictor development AUROC:** 0.744 (selection optimism possible)")
-    st.write("**External AUROC:** 0.705 (95% CI 0.605–0.804)")
+    st.write("**Development cohort:** n=1,140, 175 events")
+    st.write("**External validation:** n=252, 40 events")
+    st.write("**Selection-inclusive mean repeat-level AUROC:** 0.687 (95% CI 0.653–0.720)")
+    st.write("**Fixed-predictor averaged out-of-fold AUROC:** 0.738 (95% CI 0.697–0.779; selection optimism possible)")
+    st.write("**External AUROC:** 0.701 (95% CI 0.613–0.791)")
     st.write(f"**Study-derived probability cutoff:** {study_cutoff:.3f}")
     st.divider()
     st.caption(
@@ -181,7 +182,8 @@ with st.sidebar:
     )
 
 st.subheader("Patient information")
-st.caption("Enter information available by the end of surgery. All ten fields are required. The initial values are illustrative, not recorded patient observations; replace them with the actual values. This interface does not accept missing values.")
+st.caption("All ten fields are required. The initial values are illustrative, not recorded patient observations; replace them with the actual values. This interface does not accept missing values.")
+st.info("CK, LDH and neutrophil percentage were recorded in the preoperative laboratory section of the source records, but their exact sampling times could not be confirmed. Availability before the end of surgery was therefore not verified for every measurement. This limits interpretation as a prospective end-of-surgery tool.")
 
 left, right = st.columns(2, gap="large")
 
@@ -194,29 +196,29 @@ with left:
     neutrophils = st.number_input(
         "Neutrophils (%)",
         min_value=0.0, max_value=100.0, value=62.6, step=0.1,
-        help="Preoperative neutrophil percentage."
+        help="Neutrophil percentage recorded in the preoperative laboratory section; exact sampling time was unavailable."
     )
     ck = st.number_input(
         "Creatine kinase, CK (U/L)",
         min_value=0.0, max_value=10000.0, value=60.0, step=1.0,
-        help="Preoperative creatine kinase."
+        help="CK recorded in the preoperative laboratory section; exact sampling time was unavailable."
     )
     optime = st.number_input(
         "Operative time (min)",
         min_value=30, max_value=1000, value=265, step=5,
-        help="Total operative duration."
+        help="Time from recorded surgery start to surgery end, in minutes; not anesthesia duration."
     )
     ldh = st.number_input(
         "Lactate dehydrogenase, LDH (U/L)",
         min_value=0.0, max_value=5000.0, value=172.0, step=1.0,
-        help="Preoperative lactate dehydrogenase."
+        help="LDH recorded in the preoperative laboratory section; exact sampling time was unavailable."
     )
 
 with right:
     cryoprecipitate = st.number_input(
         "Cryoprecipitate transfusion (mL)",
         min_value=0.0, max_value=3000.0, value=0.0, step=1.0,
-        help="Use the historical study-recorded mL scale only. The unit mapping has not been independently verified. Do not substitute units or bags."
+        help="Total cryoprecipitate volume in mL; enter 0 if none was administered. Do not enter units or bags. The study-specific historical conversion of 25 mL per unit is not a universal conversion."
     )
     mchc = st.number_input(
         "MCHC (g/L)",
@@ -311,8 +313,8 @@ if st.button("Calculate PMI risk", type="primary", use_container_width=True):
                 <div class="risk-number">{percent:.1f}%</div>
                 <div class="risk-label">{label}</div>
                 <div class="small-note">
-                    The cutoff ({study_cutoff:.3f}) was derived from repeated nested
-                    out-of-fold predictions in the development cohort using the Youden index.
+                    The cutoff ({study_cutoff:.3f}) was derived using the Youden index
+                    in the original development analysis and retained unchanged.
                 </div>
             </div>
             """,

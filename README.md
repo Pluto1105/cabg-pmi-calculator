@@ -1,43 +1,34 @@
-# CABG PMI Streamlit calculator — upload package
+# CABG PMI research calculator
 
-All FIVE files are in one directory. Upload all five files directly into the root of your GitHub repository. Do not upload the ZIP itself or an extra enclosing folder.
+Release: 2026-10-18. Fixed ten-predictor calibrated SVM for research after isolated on-pump CABG.
 
-## Included files
-- `app.py`: Streamlit application.
-- `final_model_bundle.joblib`: original locked fitted model, unchanged.
-- `requirements.txt`: dependencies, including scikit-learn==1.7.2.
-- `model-specification.json`: hyperparameters, all calibration coefficients, feature order and limitations.
-- `README.md`: these instructions.
+## Validation
 
-## GitHub upload / GitHub 上传
-1. Create a new repository named `cabg-pmi-calculator` under your account. Select **Private**. Do not initialize it with README, .gitignore or a license; this package already contains README.md.
-2. On the new repository's Quick setup page, choose **uploading an existing file**. If a file list is already shown, choose **Add file > Upload files**.
-3. Extract this ZIP. Select all five files inside and drag them into the upload area.
-4. Wait until all five files appear. Enter `Add CABG PMI calculator` as the commit message, then click **Commit changes**.
-5. Confirm that `app.py`, `requirements.txt` and `final_model_bundle.joblib` are directly visible in the repository root. Check the actual branch name (usually `main`).
+Development: 1,140 patients, 175 PMI events. Selection-inclusive mean repeat-level AUROC: 0.687 (95% CI 0.653–0.720). Fixed-predictor averaged out-of-fold AUROC: 0.738 (95% CI 0.697–0.779), potentially optimistic because of historical predictor selection.
 
-## Streamlit deployment / Streamlit 部署
-- Repository: `Pluto1105/cabg-pmi-calculator`, if that is the repository you created.
-- Branch: the actual branch shown in GitHub (e.g. `main`).
-- Main file path: `app.py`.
-- App URL: `cabg-pmi-study-1971681` (availability must be checked by Streamlit).
-- Advanced settings > Python version: **3.12**.
-- Click **Deploy**. If your private repository is not listed, authorize Streamlit to access that repository.
-- Once deployed, open app settings > Sharing and allow public access if you want reviewers to use it without invitations. Keep the GitHub repository private.
+Combined external validation: 252 patients, 40 events; AUROC 0.701 (95% CI 0.613–0.791), AUPRC 0.366, Brier score 0.123, calibration slope 0.929 (95% CI 0.526–1.394), observed-to-expected ratio 0.929. External validation remains preliminary.
 
-## Scope
-This is a research implementation. The model file matches the locked model used in the original 193-person external validation. Its SHA-256 is `0c8206ff983d6cecd27639e1f2067614ec2765f77c569558d69db7a1ff9c9861`. No model training or recalibration is performed.
+The model incorporates corrected cryoprecipitate volumes; external performance uses corrected operative time. The original research threshold 0.14232085428111443 is retained unchanged, not a validated clinical action threshold. No runtime training or recalibration is performed.
 
-All ten input fields must be completed. Initial numeric entries are illustrative, not observed patient values. This interface does not impute missing values. ASA III=0 and ASA IV=1; other grades are outside this encoding. MCHC uses g/L, and neutrophils use percent. The cryoprecipitate unit mapping remains a study limitation.
+## Inputs and limitations
 
-The package contains no patient data spreadsheets or analysis datasets. The fitted SVM contains support vectors, so a public model-file release should be considered separately from public access to the app. Deploying this calculator alone does not provide a public archive of the full analysis code.
+All ten inputs are required; defaults are illustrative. ASA III=0 and ASA IV=1; other grades are not represented. Neutrophils use percent; albumin and MCHC use g/L; CK and LDH use U/L.
 
-The application is not intended to diagnose myocardial infarction, guide treatment, or estimate causal oxycodone effects.
+CK, LDH and neutrophil percentage were recorded in the preoperative laboratory section of source records, but exact sampling times could not be confirmed. Availability before the end of surgery was not verified for every measurement, limiting interpretation as a prospective end-of-surgery tool.
 
-## Local run
-Use Python 3.12, then run:
+Operative time is recorded surgery start to end, not anesthesia duration. Cryoprecipitate is total volume in mL (0 if none). Historical study entries in units were converted using the study-specific 25 mL/unit mapping; do not assume this conversion for other institutions or products.
+
+The outcome is biomarker-defined PMI: recorded peak cTnI at least 70 times the study upper reference limit on postoperative days 1–3, not a stand-alone myocardial infarction diagnosis. Predictions do not establish clinical treatment benefit or causal oxycodone effects.
+
+## Deployment
+
+Replace the five same-named files in the existing `Pluto1105/cabg-pmi-calculator` repository. Upload extracted files, not the ZIP. Preserve repository visibility and Streamlit settings. Use Python 3.12, scikit-learn 1.8.0 and entry point `app.py`. Reboot after deployment to clear the cached previous model, confirm the displayed metrics and test a prediction. Updating this package alone does not update the hosted app.
 
 ```sh
 python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
+
+Hyperparameters, calibration coefficients, feature order and model SHA-256 are in `model-specification.json`. Complete inputs are passed in fitted feature order to the calibrated estimator, including fitted standardization. Development imputers remain in the bundle but are not used by the complete-input interface.
+
+No patient spreadsheets are included. The fitted SVM contains training-derived support vectors; public model-file release requires appropriate data-sharing authorization. This package is not the complete study analysis archive.
