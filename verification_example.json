@@ -1,0 +1,29 @@
+{
+  "input_features": [
+    "albumin",
+    "neutrophils",
+    "ck",
+    "optime",
+    "ldh",
+    "cryoprecipitate",
+    "_mchc",
+    "copd",
+    "asa_grade",
+    "oxycodone"
+  ],
+  "illustrative_input": [
+    40.0,
+    62.6,
+    60.0,
+    265.0,
+    172.0,
+    0.0,
+    331.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "expected_probability": 0.08867162212523645,
+  "expected_display": "8.9%",
+  "external_prediction_check": "252/252 predictions agree with archived final model to atol=1e-12"
+}

@@ -1,41 +1,6 @@
 {
-  "model_version": "cabg-pmi-corrected-2026-10-18",
-  "model_file_sha256": "8e7dd3057e52f49cd92ea24d4c46fff92a33a0de043d85e231c8f39c721518e9",
-  "kernel": "rbf",
-  "C": 0.054231572785510225,
-  "gamma": 0.019189265212148112,
-  "class_weight": "balanced",
-  "calibration": "sigmoid, five-component mean",
-  "calibration_formula": "p = mean_j(1 / (1 + exp(a_j * decision_j + b_j)))",
-  "calibration_parameters": [
-    {
-      "component": 1,
-      "a": -1.2751084004516717,
-      "b": 1.5060525744935256
-    },
-    {
-      "component": 2,
-      "a": -2.253031795625145,
-      "b": 1.1695480265676494
-    },
-    {
-      "component": 3,
-      "a": -1.7275583114839905,
-      "b": 1.344600525871852
-    },
-    {
-      "component": 4,
-      "a": -1.505145321214977,
-      "b": 1.3028205369458814
-    },
-    {
-      "component": 5,
-      "a": -0.8101164566445757,
-      "b": 1.4679602517714208
-    }
-  ],
-  "fixed_research_threshold": 0.14232085428111443,
-  "features_in_order": [
+  "model_name": "SVM",
+  "features": [
     "albumin",
     "neutrophils",
     "ck",
@@ -47,46 +12,50 @@
     "asa_grade",
     "oxycodone"
   ],
-  "continuous_imputation": "Development-fitted IterativeImputer, median initialization, max_iter=25, random_state=20269806.",
-  "binary_imputation": "Development-fitted most-frequent imputation.",
-  "preprocessing": "Per-component fitted StandardScaler, RBF SVC and sigmoid calibration.",
-  "laboratory_timing": "CK, LDH and neutrophil percentage recorded in the preoperative laboratory section; exact sampling times unavailable.",
-  "operative_time": "Recorded surgery start to end, minutes; not anesthesia duration.",
-  "cryoprecipitate": "Total mL; study-specific historical conversion 25 mL/U, not universal.",
-  "development": {
-    "n": 1140,
-    "events": 175,
-    "selection_inclusive_mean_repeat_auroc": 0.687,
-    "selection_inclusive_mean_repeat_auroc_95_ci": [
-      0.653,
-      0.72
-    ],
-    "fixed_predictor_averaged_oof_auroc": 0.738,
-    "fixed_predictor_averaged_oof_auroc_95_ci": [
-      0.697,
-      0.779
-    ]
+  "transformed_feature_names": [
+    "albumin",
+    "neutrophils",
+    "ck",
+    "optime",
+    "ldh",
+    "cryoprecipitate",
+    "_mchc",
+    "copd",
+    "asa_grade",
+    "oxycodone"
+  ],
+  "best_parameters": {
+    "model__C": 0.054231572785510225,
+    "model__class_weight": "balanced",
+    "model__gamma": 0.019189265212148112
   },
-  "external_validation": {
-    "n": 252,
-    "events": 40,
-    "auroc": 0.701,
-    "auroc_95_ci": [
-      0.613,
-      0.791
-    ],
-    "auprc": 0.366,
-    "brier": 0.123,
-    "calibration_slope": 0.929,
-    "calibration_slope_95_ci": [
-      0.526,
-      1.394
-    ],
-    "observed_to_expected": 0.929
-  },
-  "training_software": "scikit-learn 1.8.0",
-  "calculator_missing_data": "Complete inputs required; no interface imputation. Defaults illustrative.",
-  "use": "Research only; preliminary external validation, not a clinical action or diagnostic tool.",
-  "threshold_origin": "Original development Youden threshold retained unchanged.",
-  "endpoint": "Recorded peak cTnI >=70 times study URL on postoperative days 1-3; biomarker-defined PMI."
+  "best_internal_cv_AUROC": 0.7272589448150394,
+  "oof_threshold": 0.14232085428111443,
+  "data_scenario": "Latest_laboratory_correction_20261024",
+  "cryoprecipitate_unit": "mL",
+  "events": 170,
+  "model_version": "2026-10-26",
+  "model_sha256": "b40aa10e6d39539a35e3f72ec895267a95fdfd547679bb366ee5bbd60f37ddf4",
+  "calibration": [
+    {
+      "a": -1.6573516591160653,
+      "b": 1.4214299575339704
+    },
+    {
+      "a": -1.1215033078279153,
+      "b": 1.37535198709006
+    },
+    {
+      "a": -1.7122266839168336,
+      "b": 1.2460146584297613
+    },
+    {
+      "a": -1.4509264730419902,
+      "b": 1.4045419652735662
+    },
+    {
+      "a": -1.5342283496112337,
+      "b": 1.419637771641341
+    }
+  ]
 }

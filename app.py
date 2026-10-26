@@ -168,13 +168,16 @@ st.markdown(
 
 with st.sidebar:
     st.subheader("Model information")
-    st.write("**Primary endpoint:** recorded peak cTnI ≥70× the applicable study upper reference limit on postoperative days 1–3.")
-    st.write("**Development cohort:** n=1,140, 175 events")
-    st.write("**External validation:** n=252, 40 events")
-    st.write("**Selection-inclusive mean repeat-level AUROC:** 0.687 (95% CI 0.653–0.720)")
-    st.write("**Fixed-predictor averaged out-of-fold AUROC:** 0.738 (95% CI 0.697–0.779; selection optimism possible)")
-    st.write("**External AUROC:** 0.701 (95% CI 0.613–0.791)")
-    st.write(f"**Study-derived probability cutoff:** {study_cutoff:.3f}")
+    st.caption("Model version: 2026-10-26 · laboratory-verified outcomes")
+    st.write("**Primary endpoint:** peak specimen-mean cTnI ≥70×URL (2.52 μg/L) during postoperative days 1–3.")
+    st.write("**Development cohort:** n=1,140, 170 events")
+    st.write("**External validation:** n=252, 37 events")
+    st.write("**Selection-inclusive mean repeat-level AUROC:** 0.711 (95% CI 0.674–0.746)")
+    st.write("**Fixed-predictor averaged out-of-fold AUROC:** 0.743 (95% CI 0.701–0.783; selection optimism possible)")
+    st.write("**External AUROC:** 0.718 (95% CI 0.628–0.809)")
+    st.write("**External calibration slope:** 1.018 (95% CI 0.603–1.514)")
+    st.write("**External observed/expected event ratio:** 0.892")
+    st.write(f"**Retained research cutoff:** {study_cutoff:.2%}")
     st.divider()
     st.caption(
         "This calculator is intended for research and risk-stratification purposes only. "
@@ -313,7 +316,7 @@ if st.button("Calculate PMI risk", type="primary", use_container_width=True):
                 <div class="risk-number">{percent:.1f}%</div>
                 <div class="risk-label">{label}</div>
                 <div class="small-note">
-                    The cutoff ({study_cutoff:.3f}) was derived using the Youden index
+                    The retained research cutoff ({study_cutoff:.2%}) was originally derived using the Youden index
                     in the original development analysis and retained unchanged.
                 </div>
             </div>
@@ -361,3 +364,6 @@ with st.expander("Locked-model parameters and calibration coefficients"):
     specification_text = specification_path.read_text(encoding="utf-8")
     st.json(json.loads(specification_text))
     st.download_button("Download model specifications", data=specification_text, file_name="model-specification.json", mime="application/json")
+
+with st.expander("Study outcome definition"):
+    st.write("Valid repeated cTnI measurements from the same blood sample were averaged first. The highest specimen-level value during postoperative days 1–3 defined the patient peak. PMI was defined as peak cTnI ≥70×URL (2.52 μg/L; study URL 0.036 μg/L). This is a biomarker-defined outcome, not adjudicated myocardial infarction.")
